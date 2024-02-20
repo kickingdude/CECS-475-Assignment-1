@@ -41,10 +41,10 @@ namespace Stock
         public stock(string name, int startingValue, int maxChange, int threshold)
         {
             _name = name;
-            _initialValue = startingValue;
-            _currentValue = InitialValue;
-            _maxChange = maxChange;
-            _threshold = threshold;
+            InitialValue = _initialValue = startingValue;
+            CurrentValue = _currentValue = InitialValue;
+            MaxChange = _maxChange = maxChange;
+            Threshold = _threshold = threshold;
             this._thread = new Thread(new ThreadStart(Activate));
             _thread.Start();
         }
@@ -63,7 +63,7 @@ namespace Stock
         //--------------------------------------------------------------------------------------
         // delegate
         public delegate void StockNotification(String stockName, int currentValue, int numberChanges);
-// event
+        // event
         public event StockNotification ProcessComplete;
 //-------------------------------------------------------------------------------
 /// <summary>
@@ -75,8 +75,8 @@ namespace Stock
                     CurrentValue += rand.Next(1, MaxChange);
                     NumChanges++;
                     if ((CurrentValue - InitialValue) > Threshold)
-                    { 
-                        ProcessComplete(StockName, CurrentValue, NumChanges);
+                    {
+                        StockEvent?.Invoke(this, ProcessComplete);
                     }
                 }
 //---------------------------------------------------------------------------------------

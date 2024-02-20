@@ -20,6 +20,8 @@ namespace Stock
             this.StockName = stockName;
             this.CurrentValue = currentValue;
             this.NumChanges = numChanges;
+
+
         }
     }
 }
