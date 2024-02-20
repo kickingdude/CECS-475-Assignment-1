@@ -25,20 +25,20 @@ namespace Stock
 /// The stockbroker object
 /// </summary>
 /// <param name="brokerName">The stockbroker's name</param>
-public StockBroker(string brokerName)
-        {
-            BrokerName = brokerName;
-        }
+    public StockBroker(string brokerName)
+            {
+                BrokerName = brokerName;
+            }
 //---------------------------------------------------------------------------------------
 /// <summary>
 /// Adds stock objects to the stock list
 /// </summary>
 /// <param name="stock">Stock object</param>
-public void AddStock(stock stock)
-        {
-            //stocks._____________________________
-            //stock.____________________________________
-}
+    public void AddStock(stock stock)
+            {
+                stocks.Add(stock);
+                stock.StockEvent += EventHandler;
+            }
 //---------------------------------------------------------------------------------------
 
 /// <summary>
@@ -46,29 +46,33 @@ public void AddStock(stock stock)
 /// </summary>
 /// <param name="sender">The sender that indicated a change</param>
 /// <param name="e">Event arguments</param>
-void EventHandler(Object sender, EventArgs e)
-        {
+    void EventHandler(Object sender, stock.StockNotification e)
+            {
+            myLock.EnterReadLock();
             try
-            { //LOCK Mechanism
-                //______________________________
-                stock newStock = (stock)sender;
-                //string statement;
+                { //LOCK Mechanism
+                    //______________________________
+                    stock newStock = (stock)sender;
+                // string statement;
                 //!NOTE!: Check out C#events, pg.4
                 // Display the output to the console windows
-                Console.WriteLine(BrokerName.PadRight(16)
+                    Console.WriteLine(titles);
+                
+                    
                 //______________________________________________);
                 //Display the output to the file
-                //using (StreamWriter outputFile = ________________________________________________)
-                {
-                    //________________________________________________
+                using (StreamWriter outputFile = new StreamWriter(destPath))
+                    {
+                    outputFile.WriteLine(BrokerName.PadRight(16), newStock.StockName.PadRight(16), newStock.CurrentValue + " ".PadRight(16), newStock.NumChanges + " ".PadRight(16), DateTime.Now.ToString().PadRight(16));
                 }
-                //RELEASE the lock
-                //____________________
+                    //RELEASE the lock
+                    //____________________
+                }
+                finally
+                {
+                myLock.ExitReadLock();
             }
-            finally
-            {
             }
-        }
 //---------------------------------------------------------------------------------------
     }
 }

@@ -45,40 +45,40 @@ namespace Stock
             _currentValue = InitialValue;
             _maxChange = maxChange;
             _threshold = threshold;
-            //_thread = new Thread(new ThreadStart(______________________));
-            //_thread.________________;
+            this._thread = new Thread(new ThreadStart(Activate));
+            _thread.Start();
         }
 //-------------------------------------------------------------------------------
 /// <summary>
 /// Activates the threads synchronizations
 /// </summary>
-public void Activate()
-        {
-            for (int i = 0; i < 25; i++)
-            {
-                Thread.Sleep(500); // 1/2 second
-                ChangeStockValue();
-            }
-        }
+        public void Activate()
+                {
+                    for (int i = 0; i < 25; i++)
+                    {
+                        Thread.Sleep(500); // 1/2 second
+                        ChangeStockValue();
+                    }
+                }
         //--------------------------------------------------------------------------------------
         // delegate
-        //public delegate void StockNotification(String stockName, int currentValue, int numberChanges);
+        public delegate void StockNotification(String stockName, int currentValue, int numberChanges);
 // event
-//public event StockNotification ProcessComplete;
+        public event StockNotification ProcessComplete;
 //-------------------------------------------------------------------------------
 /// <summary>
 /// Changes the stock value and also raising the event of stock value changes
 /// </summary>
-public void ChangeStockValue()
-        {
-            var rand = new Random();
-            CurrentValue += rand.Next(1, MaxChange);
-            NumChanges++;
-            if ((CurrentValue - InitialValue) > Threshold)
-            { //RAISE THE EVENT
-                //_____ Invoke _____________________________________________________
-            }
-        }
+        public void ChangeStockValue()
+                {
+                    var rand = new Random();
+                    CurrentValue += rand.Next(1, MaxChange);
+                    NumChanges++;
+                    if ((CurrentValue - InitialValue) > Threshold)
+                    { 
+                        ProcessComplete(StockName, CurrentValue, NumChanges);
+                    }
+                }
 //---------------------------------------------------------------------------------------
     }
 }
