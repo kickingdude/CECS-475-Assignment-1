@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 namespace Stock
@@ -17,9 +18,10 @@ namespace Stock
         readonly string destPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
         "Lab1_output.txt");
 
-        public string titles = "Broker".PadRight(10) + "Stock".PadRight(15) +
-        "Value".PadRight(10) + "Changes".PadRight(10) + "Date and Time";
+        public string titles = "Broker".PadRight(16) + "Stock".PadRight(16) +
+        "Value".PadRight(16) + "Changes".PadRight(16) + "Date and Time";
 
+        private static bool titlePrinted = false;
         //---------------------------------------------------------------------------------------
         /// <summary>
         /// The stockbroker object
@@ -48,10 +50,11 @@ namespace Stock
         /// <param name="e">Event arguments</param>
         async void EventHandler(Object sender, EventArgs e)
         {
-
+            ///Console.WriteLine(titles);
             try
             {
                 myLock.EnterWriteLock();
+
                 //______________________________
                 stock newStock = (stock)sender;
                 var stockNotification = e as StockNotification;
@@ -59,12 +62,20 @@ namespace Stock
                 // Display the output to the console windows
                 if (stockNotification != null)
                 {
-                    string output = BrokerName.PadRight(16) + stockNotification.StockName.PadRight(16) + stockNotification.CurrentValue + " ".PadRight(16) + stockNotification.NumChanges + " ".PadRight(16) + DateTime.Now.ToString();
-                    Console.WriteLine(titles + output);
-                    using (StreamWriter outputFile = new StreamWriter(destPath))
+                    string output = BrokerName.PadRight(16) + stockNotification.StockName.PadRight(16) + stockNotification.CurrentValue + " ".PadRight(16) + stockNotification.NumChanges + " ".PadRight(16) + DateTime.Now.ToString(); ;
+                    using (StreamWriter outputFile = new StreamWriter(destPath, false))
                     {
-                        await outputFile.WriteLineAsync(titles + output);
+                        if (!titlePrinted)
+                        {
+                            Console.WriteLine(titles);
+                            await outputFile.WriteLineAsync(titles);
+                            titlePrinted = true;
+                        }
+                        await outputFile.WriteLineAsync(output);
                     }
+
+                    Console.WriteLine(output);
+
                 }
             }
             finally
